@@ -1,0 +1,335 @@
+// *** Roboto slab font family =====>>
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+// *** Colors =====>>
+$color-primary: #0d2e89;
+$color-secondary: #4ed8ae;
+$color-tertiary: #9c9c9c;
+$color-tertiary-light: #e0e0e0;
+
+// *** Mixins =====>>
+@mixin flexbox(
+  $direction: null,
+  $justifyContent: null,
+  $alignItems: null,
+  $gap: null
+) {
+  display: flex;
+
+  @if ($direction) {
+    flex-direction: $direction;
+  }
+
+  @if ($justifyContent) {
+    justify-content: $justifyContent;
+  }
+
+  @if ($alignItems) {
+    align-items: $alignItems;
+  }
+
+  @if ($gap) {
+    gap: $gap;
+  }
+}
+
+// *** Universal =====>>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Roboto Slab', serif;
+  scroll-behavior: smooth;
+}
+
+a {
+  color: $color-secondary;
+
+  &:hover {
+    color: $color-primary;
+  }
+
+  &:active {
+    color: $color-tertiary;
+  }
+}
+
+ul {
+  list-style-type: none;
+}
+
+// *** Loading Spinner =====>>
+.spin-container {
+  height: 100vh;
+  @include flexbox($justifyContent: center, $alignItems: center);
+}
+
+// *** Signup and Signin page =====>>
+.auth {
+  height: 100vh;
+  @include flexbox($justifyContent: center, $alignItems: center);
+
+  > .ant-card {
+    width: 50%;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+
+    .ant-card-head-title {
+      color: $color-primary;
+      font-weight: 800;
+      font-size: 18px;
+      letter-spacing: 0.5px;
+    }
+
+    button {
+      @include flexbox($justifyContent: center, $alignItems: center, $gap: 5px);
+    }
+
+    @media screen and (max-width: 960px) {
+      width: 70%;
+    }
+
+    @media screen and (max-width: 550px) {
+      width: 85%;
+    }
+  }
+}
+
+// *** Logout Button =====>>
+.logout-btn {
+  position: absolute;
+  top: 20px;
+  right: 60px;
+  @include flexbox($justifyContent: center, $alignItems: center, $gap: 5px);
+  letter-spacing: 0.4px;
+}
+
+// *** OwnTeams and PartOfTeams components =====>>
+.own-teams,
+.part-of-teams {
+  @include flexbox($direction: column, $alignItems: center);
+  margin-top: 40px;
+
+  > h2 {
+    color: $color-primary;
+    margin: 20px 0;
+    letter-spacing: 0.2px;
+  }
+
+  .spin {
+    margin: 20px 0;
+    margin-bottom: 20px;
+    padding: 30px 50px;
+    text-align: center;
+    border-radius: 4px;
+  }
+
+  > .team {
+    width: 80vw;
+    margin: 10px 0;
+    cursor: pointer;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 2px 0px;
+
+    &:hover {
+      box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+      transform: matrix3d(2);
+    }
+
+    h4 {
+      font-size: 18px;
+      font-weight: 500;
+    }
+
+    .team-info {
+      .title {
+        font-weight: 700;
+      }
+    }
+  }
+}
+
+// *** Admin Team Page =====>>
+.admin-team-page {
+  .ant-tabs-tab {
+    margin-left: 25px;
+  }
+
+  .settings {
+    button {
+      @include flexbox($justifyContent: center, $alignItems: center, $gap: 5px);
+    }
+
+    h3 {
+      font-size: 20px;
+    }
+    .questions {
+      padding: 20px;
+      input {
+        margin-left: 60px;
+        border-bottom: 2px solid $color-tertiary;
+        width: 400px;
+
+        &::placeholder {
+          color: $color-tertiary;
+        }
+
+        @media screen and (max-width: 760px) {
+          width: 300px;
+          margin-left: 20px;
+        }
+      }
+    }
+
+    .members {
+      padding: 20px;
+
+      > ul {
+        margin: 20px 0 10px 60px;
+        @include flexbox($gap: 10px);
+        flex-wrap: wrap;
+
+        > li {
+          background-color: $color-tertiary-light;
+          font-size: 16px;
+          @include flexbox(
+            $justifyContent: center,
+            $alignItems: center,
+            $gap: 5px
+          );
+          padding: 8px 10px;
+          border-radius: 50px;
+
+          svg {
+            cursor: pointer;
+
+            &:hover {
+              color: red;
+            }
+          }
+        }
+        @media screen and (max-width: 760px) {
+          margin-left: 20px;
+        }
+      }
+    }
+
+    .add-member {
+      margin-left: 100px;
+
+      @include flexbox($gap: 10px);
+
+      > input {
+        border: none;
+        outline: none;
+        border-bottom: 2px solid $color-tertiary;
+        width: 450px;
+        &::placeholder {
+          color: $color-tertiary;
+        }
+      }
+
+      @media screen and (max-width: 760px) {
+        margin-left: 50px;
+
+        > input {
+          width: 300px;
+        }
+      }
+
+      @media screen and (max-width: 480px) {
+        flex-direction: column;
+
+        button {
+          width: 300px;
+        }
+      }
+    }
+
+    .btn-container {
+      margin-top: 40px;
+      margin-left: 100px;
+      @include flexbox($gap: 20px);
+      @media screen and (max-width: 760px) {
+        margin-left: 50px;
+        flex-direction: column;
+        button {
+          width: 300px;
+        }
+      }
+    }
+  }
+
+  .reports {
+    // background-color: red;
+    padding: 20px;
+    margin-left: 40px;
+
+    .ant-picker {
+      margin-bottom: 10px;
+    }
+
+    h2 {
+      color: $color-primary;
+      font-size: 24px;
+      margin: 20px 0;
+    }
+
+    .answer {
+      padding: 10px 0;
+      h3 {
+        font-weight: 500;
+      }
+
+      h4 {
+        font-weight: 500;
+      }
+    }
+
+    @media screen and (max-width: 500px) {
+      margin-left: 10px;
+
+      .answer {
+        padding: 10px 0;
+        h3 {
+          font-size: 14px;
+        }
+      }
+    }
+  }
+}
+
+// *** Member Team Page =====>>
+.member-team-page {
+  height: 100vh;
+  @include flexbox($justifyContent: center, $alignItems: center);
+
+  .member-back-icon {
+    position: absolute;
+    top: 40px;
+    left: 40px;
+    cursor: pointer;
+  }
+
+  h2 {
+    color: $color-primary;
+    font-size: 25px;
+  }
+
+  .ant-card {
+    width: 50%;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+
+    button {
+      @include flexbox($justifyContent: center, $alignItems: center, $gap: 5px);
+    }
+
+    @media screen and (max-width: 1100px) {
+      width: 70%;
+    }
+    @media screen and (max-width: 750px) {
+      width: 80%;
+    }
+    @media screen and (max-width: 500px) {
+      width: 90%;
+    }
+  }
+}
