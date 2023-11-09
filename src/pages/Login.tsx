@@ -1,10 +1,10 @@
-import { Link, useNavigate } from 'react-router-dom';
-import { Button, Card, Form, Input, message, Typography } from 'antd';
-import { AiOutlineLogin, AiOutlineLock, AiOutlineMail } from 'react-icons/ai'; // ~ Icons
-import { ILoginForm } from '../types/interfaces';
-import { auth } from '../firebase';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { useState } from 'react';
+import { Link, useNavigate } from "react-router-dom";
+import { Button, Card, Form, Input, message, Typography } from "antd";
+import { AiOutlineLogin, AiOutlineLock, AiOutlineMail } from "react-icons/ai"; // ~ Icons
+import { ILoginForm } from "../types/interfaces";
+import { auth } from "../firebase";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { useState } from "react";
 
 const { Text } = Typography;
 
@@ -16,17 +16,16 @@ const Login = () => {
   const loginHandler = async (values: ILoginForm) => {
     setIsLoading(true);
     const { email, password } = values;
-
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      localStorage.setItem('email', email);
-      localStorage.setItem('name', auth.currentUser!.displayName!);
+      localStorage.setItem("email", email);
+      localStorage.setItem("name", auth.currentUser!.displayName!);
 
-      navigate('/');
+      navigate("/");
     } catch (error: any) {
       messageApi.open({
-        type: 'error',
-        content: error.message,
+        type: "error",
+        content: error.message || "Something went wrong",
       });
     } finally {
       setIsLoading(false);
@@ -34,48 +33,48 @@ const Login = () => {
   };
 
   return (
-    <div className='auth'>
+    <div className="auth">
       {contextHolder}
-      <Card title='LOGIN'>
-        <Form layout='vertical' requiredMark='optional' onFinish={loginHandler}>
+      <Card title="LOGIN">
+        <Form layout="vertical" requiredMark="optional" onFinish={loginHandler}>
           <Form.Item
-            name='email'
-            label='Email'
+            name="email"
+            label="Email"
             rules={[
-              { required: true, message: 'Email is required!' },
+              { required: true, message: "Email is required!" },
               {
-                type: 'email',
-                message: 'Email is not valid!',
+                type: "email",
+                message: "Email is not valid!",
               },
             ]}
           >
-            <Input placeholder='email@domain.com' prefix={<AiOutlineMail />} />
+            <Input placeholder="email@domain.com" prefix={<AiOutlineMail />} />
           </Form.Item>
 
           <Form.Item
-            name='password'
-            label='Password'
+            name="password"
+            label="Password"
             rules={[
-              { required: true, message: 'Password is required!' },
+              { required: true, message: "Password is required!" },
               {
                 min: 6,
-                message: 'Password must be at least 6 characters!',
+                message: "Password must be at least 6 characters!",
                 whitespace: true,
               },
             ]}
           >
-            <Input.Password placeholder='******' prefix={<AiOutlineLock />} />
+            <Input.Password placeholder="******" prefix={<AiOutlineLock />} />
           </Form.Item>
 
           <Form.Item>
-            <Button type='primary' htmlType='submit' loading={isLoading}>
+            <Button type="primary" htmlType="submit" loading={isLoading}>
               <AiOutlineLogin size={16} /> Login
             </Button>
           </Form.Item>
         </Form>
 
-        <Text type='secondary'>
-          Don't have an account? <Link to='/signup'>Register Now</Link>
+        <Text type="secondary">
+          Don't have an account? <Link to="/signup">Register Now</Link>
         </Text>
       </Card>
     </div>

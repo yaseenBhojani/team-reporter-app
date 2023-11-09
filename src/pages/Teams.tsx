@@ -1,20 +1,20 @@
-import { Fragment, useEffect } from 'react';
-import { Button, FloatButton, message, Tooltip } from 'antd';
+import { Fragment, useEffect } from "react";
+import { Button, FloatButton, message, Tooltip } from "antd";
 
-import { useDispatch } from 'react-redux';
-import { setModalIsOpen } from '../store/reducers/createTeamReducer';
+import { useDispatch } from "react-redux";
+import { setModalIsOpen } from "../store/reducers/createTeamReducer";
 
 // *** Components ***
-import OwnTeams from '../components/teams/OwnTeams';
-import PartOfTeams from '../components/teams/PartOfTeams';
-import CreateTeam from '../components/teams/team/CreateTeam';
+import OwnTeams from "../components/teams/OwnTeams";
+import PartOfTeams from "../components/teams/PartOfTeams";
+import CreateTeam from "../components/teams/team/CreateTeam";
 
 // *** Icons ***
-import { VscAdd } from 'react-icons/vsc';
-import { AiOutlineLogout } from 'react-icons/ai';
-import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { auth } from '../firebase';
-import { useNavigate } from 'react-router-dom';
+import { VscAdd } from "react-icons/vsc";
+import { AiOutlineLogout } from "react-icons/ai";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { auth } from "../firebase";
+import { useNavigate } from "react-router-dom";
 
 const Teams = () => {
   const dispatch = useDispatch();
@@ -24,24 +24,26 @@ const Teams = () => {
   const logoutHandler = async () => {
     try {
       await signOut(auth);
-      navigate('/login');
+      localStorage.removeItem("name");
+      localStorage.removeItem("email");
+      navigate("/login");
     } catch (error: any) {
       messageApi.open({
-        type: 'error',
-        content: error.message,
+        type: "error",
+        content: error.message || "Something went wrong",
       });
     }
   };
 
   useEffect(() => {
-    if (!localStorage.getItem('email') || !localStorage.getItem('name')) {
-      navigate('/login');
+    if (!localStorage.getItem("email") || !localStorage.getItem("name")) {
+      navigate("/login");
       return;
     }
 
-    onAuthStateChanged(auth, user => {
+    onAuthStateChanged(auth, (user) => {
       if (!user) {
-        navigate('/login');
+        navigate("/login");
       }
     });
   }, []);
@@ -51,8 +53,8 @@ const Teams = () => {
       {contextHolder}
 
       <Button
-        className='logout-btn'
-        type='primary'
+        className="logout-btn"
+        type="primary"
         danger
         onClick={logoutHandler}
       >
@@ -65,10 +67,10 @@ const Teams = () => {
 
       <CreateTeam />
 
-      <Tooltip placement='left' title={'Create Team'} color={'#4ed8ae'}>
+      <Tooltip placement="left" title={"Create Team"} color={"#4ed8ae"}>
         <FloatButton
-          shape='square'
-          type='primary'
+          shape="square"
+          type="primary"
           style={{ right: 24 }}
           icon={<VscAdd size={20} />}
           onClick={() => dispatch(setModalIsOpen(true))}

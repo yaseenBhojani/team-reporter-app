@@ -1,16 +1,16 @@
-import { useRef, useState } from 'react';
+import { useRef, useState } from "react";
 
-import { Button, Input, Popconfirm, Space, Typography, message } from 'antd';
+import { Button, Input, Popconfirm, Space, Typography, message } from "antd";
 
-import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '../../../../store/store';
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../../../store/store";
 
 import {
   IAnswer,
   IAnswerDetails,
   IMember,
   ITeam,
-} from '../../../../types/interfaces';
+} from "../../../../types/interfaces";
 
 import {
   collection,
@@ -20,26 +20,26 @@ import {
   query,
   setDoc,
   where,
-} from 'firebase/firestore';
-import { db } from '../../../../firebase';
-import validateEmail from '../../../../utils/emailValidator';
+} from "firebase/firestore";
+import { auth, db } from "../../../../firebase";
+import validateEmail from "../../../../utils/emailValidator";
 
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from "react-router-dom";
 
 // *** Icons =====>>
-import { RxCrossCircled } from 'react-icons/rx';
-import { VscSave } from 'react-icons/vsc';
+import { RxCrossCircled } from "react-icons/rx";
+import { VscSave } from "react-icons/vsc";
 import {
   AiOutlineDelete,
   AiOutlineReload,
   AiOutlineUserAdd,
-} from 'react-icons/ai';
-import { getOwnTeam } from '../../../../store/reducers/ownTeamsReducer';
+} from "react-icons/ai";
+import { getOwnTeam } from "../../../../store/reducers/ownTeamsReducer";
 
 const { Title } = Typography;
 
-const adminEmail = localStorage.getItem('email');
-const adminName = localStorage.getItem('name');
+const adminEmail = auth.currentUser?.email || localStorage.getItem("email");
+const adminName = auth.currentUser?.displayName || localStorage.getItem("name");
 
 const Settings = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -60,9 +60,9 @@ const Settings = () => {
   const [members, setMembers] = useState(initialMembers); // ~ team members
 
   // * Questions Input States
-  const [question1, setQuestion1] = useState(q1 || '');
-  const [question2, setQuestion2] = useState(q2 || '');
-  const [question3, setQuestion3] = useState(q3 || '');
+  const [question1, setQuestion1] = useState(q1 || "");
+  const [question2, setQuestion2] = useState(q2 || "");
+  const [question3, setQuestion3] = useState(q3 || "");
 
   // * Add Member Input Ref
   const addMemberInputRef = useRef<HTMLInputElement | null>(null);
@@ -77,11 +77,11 @@ const Settings = () => {
 
       // ~ if email is equal to admin then do nothing
       if (memberEmail === adminEmail) {
-        throw new Error('You cannot add yourself as a member');
+        throw new Error("You cannot add yourself as a member");
       }
       // ~ if email is not valid then do nothing
       if (!validateEmail(memberEmail)) {
-        throw new Error('Please enter a valid email address');
+        throw new Error("Please enter a valid email address");
       }
 
       // ~ if email already in a member then do nothing
@@ -89,27 +89,28 @@ const Settings = () => {
         (member: IMember) => member.email === memberEmail
       );
       if (isEmailAlreadyExist) {
-        throw new Error('This email is already a member');
+        throw new Error("This email is already a member");
       }
 
       // ~ get member to firestore
       const q = query(
-        collection(db, 'users'),
-        where('email', '==', memberEmail)
+        collection(db, "users"),
+        where("email", "==", memberEmail)
       );
       const querySnapshot = await getDocs(q);
-      const member = querySnapshot.docs[0].data();
+      console.log(querySnapshot);
+      const member = querySnapshot.docs[0]?.data();
 
       // ~ if member does not exist then do nothing
-      if (!member) throw new Error('Member does not exist');
+      if (!member) throw new Error("Member does not exist");
 
       // ~ add member to members array
-      setMembers(prevMembers => [
+      setMembers((prevMembers) => [
         ...prevMembers,
         { email: member.email, fullName: member.fullName },
       ]);
 
-      addMemberInputRef.current!.value = '';
+      addMemberInputRef.current!.value = "";
     } catch (error: any) {
       message.error(error.message);
     } finally {
@@ -126,19 +127,19 @@ const Settings = () => {
 
   // * Function for cancel team changes
   const cancelTeamChangesHandler = () => {
-    setQuestion1(q1 || '');
-    setQuestion2(q2 || '');
-    setQuestion3(q3 || '');
+    setQuestion1(q1 || "");
+    setQuestion2(q2 || "");
+    setQuestion3(q3 || "");
     setMembers(initialMembers);
-    addMemberInputRef.current!.value = '';
+    addMemberInputRef.current!.value = "";
   };
 
   // * Function for delete team
   const deleteTeamHandler = async () => {
     try {
-      await deleteDoc(doc(db, 'teams', params.id!));
-      message.success('Team deleted successfully');
-      navigate('/');
+      await deleteDoc(doc(db, "teams", params.id!));
+      message.success("Team deleted successfully");
+      navigate("/");
     } catch (error: any) {
       message.error(error.message);
     }
@@ -169,7 +170,7 @@ const Settings = () => {
         questions.push(question3);
       }
 
-      members.forEach(member => {
+      members.forEach((member) => {
         const answerDetails: IAnswerDetails = {
           time,
           name: member.fullName,
@@ -178,8 +179,8 @@ const Settings = () => {
 
         const answer: IAnswer[] = [];
 
-        questions.forEach(question => {
-          answer.push({ [question]: '' });
+        questions.forEach((question) => {
+          answer.push({ [question]: "" });
         });
 
         answerDetails.answer = answer;
@@ -193,65 +194,71 @@ const Settings = () => {
     }
 
     try {
-      await setDoc(doc(db, 'teams', params.id!), updatedTeam);
+      await setDoc(doc(db, "teams", params.id!), updatedTeam);
       dispatch(getOwnTeam(params.id!))
         .unwrap()
-        .then(() => message.success('Team updated successfully'))
-        .catch((error: any) => error.message(error.message));
+        .then(() => message.success("Team updated successfully"))
+        .catch(
+          (error: any) => error.message(error.message) || "Something went wrong"
+        );
     } catch (error: any) {
-      console.log(error);
       message.error(error.message);
     }
   };
 
   return (
-    <div className='settings'>
-      <div className='questions'>
+    <div className="settings">
+      <div className="questions">
         <Title level={3}>Questions:</Title>
-        <Space direction='vertical'>
+        <Space direction="vertical">
           <Input
-            placeholder='Question...'
+            placeholder="Question..."
             bordered={false}
             value={question1}
-            onChange={e => setQuestion1(e.target.value)}
+            onChange={(e) => setQuestion1(e.target.value)}
           />
 
           <Input
-            placeholder='Question...'
+            placeholder="Question..."
             bordered={false}
             value={question2}
-            onChange={e => setQuestion2(e.target.value)}
+            onChange={(e) => setQuestion2(e.target.value)}
           />
 
           <Input
-            placeholder='Question...'
+            placeholder="Question..."
             bordered={false}
             value={question3}
-            onChange={e => setQuestion3(e.target.value)}
+            onChange={(e) => setQuestion3(e.target.value)}
           />
         </Space>
       </div>
 
-      <div className='members'>
+      <div className="members">
         <Title level={3}>Members:</Title>
         <ul>
-          {members.map((member: IMember, index: number) => (
-            <li key={index}>
-              {member.email}{' '}
-              <RxCrossCircled
-                size={18}
-                onClick={() => removeMemberHandler(index)}
-              />
-            </li>
-          ))}
+          {members
+            .filter(
+              (member: IMember) =>
+                member.email !== localStorage.getItem("email")
+            )
+            .map((member: IMember, index: number) => (
+              <li key={index}>
+                {member.email}{" "}
+                <RxCrossCircled
+                  size={18}
+                  onClick={() => removeMemberHandler(index)}
+                />
+              </li>
+            ))}
         </ul>
       </div>
 
-      <div className='add-member'>
-        <input placeholder='Add Member' ref={addMemberInputRef} />
+      <div className="add-member">
+        <input placeholder="Add Member" ref={addMemberInputRef} />
 
         <Button
-          type='primary'
+          type="primary"
           onClick={addMemberHandler}
           loading={addMemberBtnLoading}
         >
@@ -260,15 +267,15 @@ const Settings = () => {
         </Button>
       </div>
 
-      <div className='btn-container'>
+      <div className="btn-container">
         <Popconfirm
-          title='Save changes the team'
-          description='Are you sure to save changes this Team?'
+          title="Save changes the team"
+          description="Are you sure to save changes this Team?"
           onConfirm={saveTeamChangesHandler}
-          okText='Yes'
-          cancelText='No'
+          okText="Yes"
+          cancelText="No"
         >
-          <Button type='primary'>
+          <Button type="primary">
             <VscSave />
             Save Changes
           </Button>
@@ -280,13 +287,13 @@ const Settings = () => {
         </Button>
 
         <Popconfirm
-          title='Delete the team'
-          description='Are you sure to delete this Team?'
+          title="Delete the team"
+          description="Are you sure to delete this Team?"
           onConfirm={deleteTeamHandler}
-          okText='Yes'
-          cancelText='No'
+          okText="Yes"
+          cancelText="No"
         >
-          <Button type='primary' danger>
+          <Button type="primary" danger>
             <AiOutlineDelete /> Delete Team
           </Button>
         </Popconfirm>

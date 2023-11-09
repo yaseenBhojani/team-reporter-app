@@ -1,5 +1,5 @@
 // *** Roboto slab font family =====>>
-@import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100;200;300;400;500;600;700;800;900&display=swap");
 
 // *** Colors =====>>
 $color-primary: #0d2e89;
@@ -38,7 +38,7 @@ $color-tertiary-light: #e0e0e0;
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Roboto Slab', serif;
+  font-family: "Roboto Slab", serif;
   scroll-behavior: smooth;
 }
 
@@ -259,7 +259,6 @@ ul {
   }
 
   .reports {
-    // background-color: red;
     padding: 20px;
     margin-left: 40px;
 
