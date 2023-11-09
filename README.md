@@ -1,6 +1,6 @@
 # Team Reporter App
 
-URL [Team Reporter App Deployed](https://team-reporter-app-ts.netlify.app/).
+URL [Team Reporter App Deployed](https://team-reporter-app.netlify.app/).
 
 Credintial
 
